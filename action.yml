@@ -1,10 +1,16 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: Setup Rust
+description: Installs rust using rustup
+author: ATiltedTree
 inputs:
-  myInput:              # change this
-    description: 'input description here'
-    default: 'default value if applicable'
+  version:
+    description: The version to install
+    required: true
+  components:
+    description: The components to install
+    required: false
+  targets:
+    description: The targets to install
+    required: false
 runs:
-  using: 'node12'
-  main: 'dist/index.js'
+  using: node12
+  main: dist/index.js

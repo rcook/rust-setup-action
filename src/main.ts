@@ -1,19 +1,85 @@
-import * as core from '@actions/core'
-import {wait} from './wait'
+import * as cache from "@actions/cache";
+import * as core from "@actions/core";
+import { exec } from "@actions/exec";
+import * as io from "@actions/io";
+import * as tc from "@actions/tool-cache";
+import { promises as fs } from "fs";
+import { homedir } from "os";
+import * as path from "path";
+
+const CACHE_PATH = [path.join(homedir(), ".rustup", "toolchains")];
+const INSTALL_ARGS = ["--default-toolchain", "none", "-y"];
 
 async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
-    core.debug(`Waiting ${ms} milliseconds ...`)
+    try {
+      await io.which("rustup", true);
+    } catch (error) {
+      switch (process.platform) {
+        case "darwin":
+        case "linux":
+          var rustupSh = await tc.downloadTool("https://sh.rustup.rs");
+          await fs.chmod(rustupSh, 0o755);
+          core.debug("Starting rustup install!");
+          await exec(rustupSh, INSTALL_ARGS);
+          break;
+        case "win32":
+          core.debug("Starting rustup install!");
+          await exec(
+            await tc.downloadTool("https://win.rustup.rs"),
+            INSTALL_ARGS
+          );
+          break;
+        default:
+          break;
+      }
+      core.addPath(path.join(homedir(), ".cargo", "bin"));
+    }
+    let version = core.getInput("version", { required: true });
+    let components = core.getInput("components");
+    let targets = core.getInput("targets");
 
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    await cache.restoreCache(
+      CACHE_PATH,
+      `rustup-${version}-${components}-${targets}`
+    );
+    core.info(
+      `Installing toolchain with components and targets: ${version} -- ${components} -- ${targets}`
+    );
+    let code = await exec("rustup", [
+      "toolchain",
+      "install",
+      version,
+      "--profile",
+      "minimal",
+      "--component",
+      components,
+      "--target",
+      targets,
+      "--allow-downgrade"
+    ]);
+    if (code != 0) {
+      throw `Failed installing toolchain exited with code: ${code}`;
+    }
 
-    core.setOutput('time', new Date().toTimeString())
+    core.info(`Setting the default toolchain: ${version}`);
+    let default_code = await exec("rustup", ["default", version]);
+    if (default_code != 0) {
+      throw `Failed setting the default toolchain exited with code: ${default_code}`;
+    }
+
+    core.info(
+      `##[add-matcher]${path.join(__dirname, "matcher", "rustc.json")}`
+    );
+
+    core.debug(`Saving cache: rustup-${version}-${components}-${targets}`);
+    await cache.saveCache(
+      CACHE_PATH,
+      `rustup-${version}-${components}-${targets}`
+    );
   } catch (error) {
-    core.setFailed(error.message)
+    core.setFailed(error.message);
   }
 }
 
-run()
+run();

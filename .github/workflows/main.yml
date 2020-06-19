@@ -1,0 +1,41 @@
+name: Main
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup | Checkout
+        uses: actions/checkout@v2
+      - name: Setup | Node
+        run: npm i
+      - name: Build | Lint
+        run: npm run lint
+  compile:
+    name: Compile
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup | Checkout
+        uses: actions/checkout@v2
+      - name: Setup | Node
+        run: npm i
+      - name: Build | Compile
+        run: npm run build
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    needs: [compile]
+    steps:
+      - name: Setup | Checkout
+        uses: actions/checkout@v2
+      - name: Build | Test
+        uses: ./
+        with:
+          version: stable
+          components: clippy rustfmt
