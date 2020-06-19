@@ -3006,7 +3006,7 @@ function run() {
             if (default_code != 0) {
                 throw `Failed setting the default toolchain exited with code: ${default_code}`;
             }
-            core.info(`::add-matcher::${path.join(__dirname, "matcher", "rustc.json")}`);
+            core.info(`::add-matcher::${path.join(__dirname, "..", "rustc.json")}`);
             core.debug(`Saving cache: rustup-${version}-${components.replace(" ", "-")}-${targets}`);
             yield cache.saveCache(CACHE_PATH, `rustup-${version}-${components.replace(" ", "-")}-${targets}`);
         }
