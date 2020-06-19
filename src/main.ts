@@ -88,10 +88,14 @@ async function run(): Promise<void> {
         "-"
       )}-${targets}`
     );
-    await cache.saveCache(
-      CACHE_PATH,
-      `rustup-${version}-${components.replace(" ", "-")}-${targets}`
-    );
+    try {
+      await cache.saveCache(
+        CACHE_PATH,
+        `rustup-${version}-${components.replace(" ", "-")}-${targets}`
+      );
+    } catch (error) {
+      core.warning(`Failed to save cache. Probably already cached: ${error}`);
+    }
   } catch (error) {
     core.setFailed(error.message);
   }

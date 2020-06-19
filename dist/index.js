@@ -3008,7 +3008,12 @@ function run() {
             }
             core.info(`::add-matcher::${path.join(__dirname, "..", "rustc.json")}`);
             core.debug(`Saving cache: rustup-${version}-${components.replace(" ", "-")}-${targets}`);
-            yield cache.saveCache(CACHE_PATH, `rustup-${version}-${components.replace(" ", "-")}-${targets}`);
+            try {
+                yield cache.saveCache(CACHE_PATH, `rustup-${version}-${components.replace(" ", "-")}-${targets}`);
+            }
+            catch (error) {
+                core.warning(`Failed to save cache. Probably already cached: ${error}`);
+            }
         }
         catch (error) {
             core.setFailed(error.message);
