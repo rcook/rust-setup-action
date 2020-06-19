@@ -36,28 +36,36 @@ async function run(): Promise<void> {
       core.addPath(path.join(homedir(), ".cargo", "bin"));
     }
     let version = core.getInput("version", { required: true });
-    let components = core.getInput("components");
-    let targets = core.getInput("targets");
+    let components = core.getInput("components").split(" ");
+    let targets = core.getInput("targets").split(" ");
 
     await cache.restoreCache(
       CACHE_PATH,
       `rustup-${version}-${components}-${targets}`
     );
-    core.info(
-      `Installing toolchain with components and targets: ${version} -- ${components} -- ${targets}`
-    );
-    let code = await exec("rustup", [
+
+    let args = [
       "toolchain",
       "install",
       version,
       "--profile",
       "minimal",
-      "--component",
-      components,
-      "--target",
-      targets,
       "--allow-downgrade"
-    ]);
+    ];
+    if (components) {
+      args.push("--component");
+      components.forEach(val => args.push(val));
+    }
+    if (targets) {
+      args.push("--target");
+      targets.forEach(val => args.push(val));
+    }
+
+    core.info(
+      `Installing toolchain with components and targets: ${version} -- ${components} -- ${targets}`
+    );
+
+    let code = await exec("rustup", args);
     if (code != 0) {
       throw `Failed installing toolchain exited with code: ${code}`;
     }
