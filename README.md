@@ -2,11 +2,11 @@
 
 ## Options
 
-| Option       | Required | Description                                              |
-| ------------ | -------- | -------------------------------------------------------- |
-| `version`    | `true`   | The version of rust to install                           |
-| `components` | `false`  | The additional components to install eg. clippy, rustfmt |
-| `targets`    | `false`  | The additional targets to install                        |
+| Option         | Required | Description                                              |
+| -------------- | -------- | -------------------------------------------------------- |
+| `rust-version` | `true`   | The version of rust to install                           |
+| `components`   | `false`  | The additional components to install eg. clippy, rustfmt |
+| `targets`      | `false`  | The additional targets to install                        |
 
 ## Example
 
@@ -31,7 +31,7 @@ jobs:
       - name: Setup | Rust
         uses: ATiltedTree/setup-rust@v1
         with:
-          version: stable
+          rust-version: stable
           components: clippy
       - name: Build | Lint
         run: cargo clippy
@@ -44,7 +44,7 @@ jobs:
       - name: Setup | Rust
         uses: ATiltedTree/setup-rust@v1
         with:
-          version: stable
+          rust-version: stable
       - name: Build | Compile
         run: cargo check
   test:
@@ -67,7 +67,7 @@ jobs:
       - name: Setup | Rust
         uses: ATiltedTree/setup-rust@v1
         with:
-          version: ${{ matrix.rust }}
+          rust-version: ${{ matrix.rust }}
       - name: Build | Compile
         run: cargo test
 

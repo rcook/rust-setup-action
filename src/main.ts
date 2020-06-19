@@ -35,7 +35,7 @@ async function run(): Promise<void> {
       }
       core.addPath(path.join(homedir(), ".cargo", "bin"));
     }
-    let version = core.getInput("version", { required: true });
+    let version = core.getInput("rust-version", { required: true });
     let components = core.getInput("components").split(" ");
     let targets = core.getInput("targets").split(" ");
 
@@ -53,12 +53,17 @@ async function run(): Promise<void> {
       "--allow-downgrade"
     ];
     if (components) {
-      args.push("--component");
-      components.forEach(val => args.push(val));
+      components.forEach(val => {
+        args.push("--component");
+        args.push(val);
+      });
     }
     if (targets) {
       args.push("--target");
-      targets.forEach(val => args.push(val));
+      targets.forEach(val => {
+        args.push("--target");
+        args.push(val);
+      });
     }
 
     core.info(
@@ -77,7 +82,7 @@ async function run(): Promise<void> {
     }
 
     core.info(
-      `##[add-matcher]${path.join(__dirname, "matcher", "rustc.json")}`
+      `::add-matcher::${path.join(__dirname, "matcher", "rustc.json")}`
     );
 
     core.debug(`Saving cache: rustup-${version}-${components}-${targets}`);

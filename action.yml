@@ -2,7 +2,7 @@ name: Setup Rust
 description: Installs rust using rustup
 author: ATiltedTree
 inputs:
-  version:
+  rust-version:
     description: The version to install
     required: true
   components:

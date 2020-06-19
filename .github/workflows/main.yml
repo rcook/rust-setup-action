@@ -37,5 +37,5 @@ jobs:
       - name: Build | Test
         uses: ./
         with:
-          version: stable
+          rust-version: stable
           components: clippy rustfmt
