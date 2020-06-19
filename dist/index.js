@@ -2975,7 +2975,7 @@ function run() {
             let version = core.getInput("rust-version", { required: true });
             let components = core.getInput("components").split(" ");
             let targets = core.getInput("targets").split(" ");
-            yield cache.restoreCache(CACHE_PATH, `rustup-${version}-${components}-${targets}`);
+            yield cache.restoreCache(CACHE_PATH, `rustup-${version}-${components.join("-")}-${targets}`);
             let args = [
                 "toolchain",
                 "install",
@@ -3008,8 +3008,8 @@ function run() {
                 throw `Failed setting the default toolchain exited with code: ${default_code}`;
             }
             core.info(`::add-matcher::${path.join(__dirname, "matcher", "rustc.json")}`);
-            core.debug(`Saving cache: rustup-${version}-${components}-${targets}`);
-            yield cache.saveCache(CACHE_PATH, `rustup-${version}-${components}-${targets}`);
+            core.debug(`Saving cache: rustup-${version}-${components.join("-")}-${targets}`);
+            yield cache.saveCache(CACHE_PATH, `rustup-${version}-${components.join("-")}-${targets}`);
         }
         catch (error) {
             core.setFailed(error.message);

@@ -41,7 +41,7 @@ async function run(): Promise<void> {
 
     await cache.restoreCache(
       CACHE_PATH,
-      `rustup-${version}-${components}-${targets}`
+      `rustup-${version}-${components.join("-")}-${targets}`
     );
 
     let args = [
@@ -85,10 +85,12 @@ async function run(): Promise<void> {
       `::add-matcher::${path.join(__dirname, "matcher", "rustc.json")}`
     );
 
-    core.debug(`Saving cache: rustup-${version}-${components}-${targets}`);
+    core.debug(
+      `Saving cache: rustup-${version}-${components.join("-")}-${targets}`
+    );
     await cache.saveCache(
       CACHE_PATH,
-      `rustup-${version}-${components}-${targets}`
+      `rustup-${version}-${components.join("-")}-${targets}`
     );
   } catch (error) {
     core.setFailed(error.message);
