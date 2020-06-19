@@ -1,5 +1,5 @@
 {
-  "problemMatchers": [
+  "problemMatcher": [
     {
       "owner": "rust",
       "pattern": [
