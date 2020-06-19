@@ -2973,9 +2973,9 @@ function run() {
                 core.addPath(path.join(os_1.homedir(), ".cargo", "bin"));
             }
             let version = core.getInput("rust-version", { required: true });
-            let components = core.getInput("components").split(" ");
-            let targets = core.getInput("targets").split(" ");
-            yield cache.restoreCache(CACHE_PATH, `rustup-${version}-${components.join("-")}-${targets}`);
+            let components = core.getInput("components");
+            let targets = core.getInput("targets");
+            yield cache.restoreCache(CACHE_PATH, `rustup-${version}-${components.replace(" ", "-")}-${targets}`);
             let args = [
                 "toolchain",
                 "install",
@@ -2985,14 +2985,13 @@ function run() {
                 "--allow-downgrade"
             ];
             if (components) {
-                components.forEach(val => {
+                components.split(" ").forEach(val => {
                     args.push("--component");
                     args.push(val);
                 });
             }
             if (targets) {
-                args.push("--target");
-                targets.forEach(val => {
+                targets.split(" ").forEach(val => {
                     args.push("--target");
                     args.push(val);
                 });
@@ -3008,8 +3007,8 @@ function run() {
                 throw `Failed setting the default toolchain exited with code: ${default_code}`;
             }
             core.info(`::add-matcher::${path.join(__dirname, "matcher", "rustc.json")}`);
-            core.debug(`Saving cache: rustup-${version}-${components.join("-")}-${targets}`);
-            yield cache.saveCache(CACHE_PATH, `rustup-${version}-${components.join("-")}-${targets}`);
+            core.debug(`Saving cache: rustup-${version}-${components.replace(" ", "-")}-${targets}`);
+            yield cache.saveCache(CACHE_PATH, `rustup-${version}-${components.replace(" ", "-")}-${targets}`);
         }
         catch (error) {
             core.setFailed(error.message);

@@ -36,12 +36,12 @@ async function run(): Promise<void> {
       core.addPath(path.join(homedir(), ".cargo", "bin"));
     }
     let version = core.getInput("rust-version", { required: true });
-    let components = core.getInput("components").split(" ");
-    let targets = core.getInput("targets").split(" ");
+    let components = core.getInput("components");
+    let targets = core.getInput("targets");
 
     await cache.restoreCache(
       CACHE_PATH,
-      `rustup-${version}-${components.join("-")}-${targets}`
+      `rustup-${version}-${components.replace(" ", "-")}-${targets}`
     );
 
     let args = [
@@ -53,14 +53,13 @@ async function run(): Promise<void> {
       "--allow-downgrade"
     ];
     if (components) {
-      components.forEach(val => {
+      components.split(" ").forEach(val => {
         args.push("--component");
         args.push(val);
       });
     }
     if (targets) {
-      args.push("--target");
-      targets.forEach(val => {
+      targets.split(" ").forEach(val => {
         args.push("--target");
         args.push(val);
       });
@@ -86,11 +85,14 @@ async function run(): Promise<void> {
     );
 
     core.debug(
-      `Saving cache: rustup-${version}-${components.join("-")}-${targets}`
+      `Saving cache: rustup-${version}-${components.replace(
+        " ",
+        "-"
+      )}-${targets}`
     );
     await cache.saveCache(
       CACHE_PATH,
-      `rustup-${version}-${components.join("-")}-${targets}`
+      `rustup-${version}-${components.replace(" ", "-")}-${targets}`
     );
   } catch (error) {
     core.setFailed(error.message);
