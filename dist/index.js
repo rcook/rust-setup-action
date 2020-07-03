@@ -2975,7 +2975,8 @@ function run() {
             let version = core.getInput("rust-version", { required: true });
             let components = core.getInput("components");
             let targets = core.getInput("targets");
-            yield cache.restoreCache(CACHE_PATH, `rustup-${version}-${components.replace(" ", "-")}-${targets}`);
+            const cacheKey = `rustup-${process.platform}-${version}-${components.replace(" ", "-")}-${targets}`;
+            yield cache.restoreCache(CACHE_PATH, cacheKey);
             let args = [
                 "toolchain",
                 "install",
@@ -2996,7 +2997,7 @@ function run() {
                     args.push(val);
                 });
             }
-            core.info(`Installing toolchain with components and targets: ${version} -- ${components} -- ${targets}`);
+            core.info(`Installing toolchain with components and targets: ${version} -- ${process.platform} -- ${components} -- ${targets}`);
             let code = yield exec_1.exec("rustup", args);
             if (code != 0) {
                 throw `Failed installing toolchain exited with code: ${code}`;
@@ -3007,9 +3008,9 @@ function run() {
                 throw `Failed setting the default toolchain exited with code: ${default_code}`;
             }
             core.info(`::add-matcher::${path.join(__dirname, "..", "rustc.json")}`);
-            core.debug(`Saving cache: rustup-${version}-${components.replace(" ", "-")}-${targets}`);
+            core.debug(`Saving cache: ${cacheKey}`);
             try {
-                yield cache.saveCache(CACHE_PATH, `rustup-${version}-${components.replace(" ", "-")}-${targets}`);
+                yield cache.saveCache(CACHE_PATH, cacheKey);
             }
             catch (error) {
                 core.warning(`Failed to save cache. Probably already cached: ${error}`);

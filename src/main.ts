@@ -39,7 +39,9 @@ async function run(): Promise<void> {
     let components = core.getInput("components");
     let targets = core.getInput("targets");
 
-    const cacheKey = `rustup-${process.platform}-${version}-${components.replace(" ", "-")}-${targets}`
+    const cacheKey = `rustup-${
+      process.platform
+    }-${version}-${components.replace(" ", "-")}-${targets}`;
 
     await cache.restoreCache(CACHE_PATH, cacheKey);
 
@@ -81,9 +83,7 @@ async function run(): Promise<void> {
 
     core.info(`::add-matcher::${path.join(__dirname, "..", "rustc.json")}`);
 
-    core.debug(
-      `Saving cache: ${cacheKey}`
-    );
+    core.debug(`Saving cache: ${cacheKey}`);
     try {
       await cache.saveCache(CACHE_PATH, cacheKey);
     } catch (error) {
