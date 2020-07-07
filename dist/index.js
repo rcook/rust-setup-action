@@ -19,7 +19,13 @@ module.exports =
 /******/ 		};
 /******/
 /******/ 		// Execute the module function
-/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/ 		var threw = true;
+/******/ 		try {
+/******/ 			modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/ 			threw = false;
+/******/ 		} finally {
+/******/ 			if(threw) delete installedModules[moduleId];
+/******/ 		}
 /******/
 /******/ 		// Flag the module as loaded
 /******/ 		module.l = true;
@@ -2983,7 +2989,7 @@ function run() {
                 version,
                 "--profile",
                 "minimal",
-                "--allow-downgrade"
+                "--allow-downgrade",
             ];
             if (components) {
                 components.split(" ").forEach(val => {
@@ -3013,7 +3019,7 @@ function run() {
                 yield cache.saveCache(CACHE_PATH, cacheKey);
             }
             catch (error) {
-                core.warning(`Failed to save cache. Probably already cached: ${error}`);
+                core.info(`Cache hit occurred on key ${cacheKey}, not saving cache.`);
             }
         }
         catch (error) {

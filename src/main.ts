@@ -51,7 +51,7 @@ async function run(): Promise<void> {
       version,
       "--profile",
       "minimal",
-      "--allow-downgrade"
+      "--allow-downgrade",
     ];
     if (components) {
       components.split(" ").forEach(val => {
@@ -87,7 +87,7 @@ async function run(): Promise<void> {
     try {
       await cache.saveCache(CACHE_PATH, cacheKey);
     } catch (error) {
-      core.warning(`Failed to save cache. Probably already cached: ${error}`);
+      core.info(`Cache hit occurred on key ${cacheKey}, not saving cache.`);
     }
   } catch (error) {
     core.setFailed(error.message);
