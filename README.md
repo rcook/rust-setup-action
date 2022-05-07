@@ -49,12 +49,12 @@ jobs:
         run: cargo check
   test:
     name: Test
-    matrix:
-      strategy:
+    strategy:
+      matrix:
         os:
-        - ubuntu-latest
-        - windows-latest
-        - macOS-latest
+          - ubuntu-latest
+          - windows-latest
+          - macOS-latest
         rust:
           - stable
           - beta
