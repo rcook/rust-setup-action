@@ -27,7 +27,7 @@ async function run(): Promise<void> {
           core.debug("Starting rustup install!");
           await exec(
             await tc.downloadTool("https://win.rustup.rs"),
-            INSTALL_ARGS
+            INSTALL_ARGS,
           );
           break;
         default:
@@ -67,7 +67,7 @@ async function run(): Promise<void> {
     }
 
     core.info(
-      `Installing toolchain with components and targets: ${version} -- ${process.platform} -- ${components} -- ${targets}`
+      `Installing toolchain with components and targets: ${version} -- ${process.platform} -- ${components} -- ${targets}`,
     );
 
     let code = await exec("rustup", args);
@@ -90,7 +90,11 @@ async function run(): Promise<void> {
       core.info(`Cache hit occurred on key ${cacheKey}, not saving cache.`);
     }
   } catch (error) {
-    core.setFailed(error.message);
+    if (error instanceof Error) {
+      core.setFailed(error.message);
+    } else {
+      core.setFailed("Unknown error occurred");
+    }
   }
 }
 
