@@ -34,6 +34,8 @@ jobs:
     steps:
       - name: Setup | Checkout
         uses: actions/checkout@v4
+      - name: Clean .rustup directory
+        run: rm -rf ~/.rustup
       - name: Build | Test
         uses: ./
         with:
