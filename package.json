@@ -24,7 +24,7 @@
   "author": "ATiltedTree",
   "license": "MIT",
   "dependencies": {
-    "@actions/cache": "^3.2.4",
+    "@actions/cache": "^4.0.2",
     "@actions/core": "^1.6.0",
     "@actions/exec": "^1.1.1",
     "@actions/io": "^1.1.3",
